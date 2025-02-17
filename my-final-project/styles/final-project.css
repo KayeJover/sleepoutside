@@ -187,39 +187,13 @@ button:hover {
 .vote-button:hover {
     background-color: #e04c2a;
 }
-/*** TRIVIA***/
-.trivia-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-.question {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-.answer-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 5px;
-}
-.answer-button:hover {
-    background-color: #e04c2a;
-}
 footer {
     background-color: var(--secondary-color);
     color: white;
     text-align: center;
-    MARGIN-TOP: 50px;
+    right:-5px;
+    position: absolute;
     padding: 1rem;
-    
-    bottom: 0;
     width: 100%;
 }
 @media (max-width: 768px) {
