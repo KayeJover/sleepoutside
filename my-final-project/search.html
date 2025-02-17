@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Night Organizer</title>
+    <meta name="description" content="Final Project">
+    <meta name="author" content=" Kaye Gualingco ">
+    <link rel="stylesheet" href="styles/final-project.css">
+    <script src="scripts/app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Movie Night Organizer</h1>
+        <nav>
+            <ul>
+                <li><a href="input.html">Home</a></li>
+                <li><a href="search.html">Search Movies</a></li>
+                <li><a href="plan.html">Plan Event</a></li>
+                <li><a href="voting.html">Voting</a></li>
+                <li><a href="trivia.html">Trivia</a></li>
+            </ul>
+        </nav>
+    </header>
+       
+    <main>
+        <section id="search-movies">
+            <h2>Search for Movies</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Enter movie title...">
+                <select id="genre-filter">
+                    <option value="">All Genres</option>
+                </select>
+                <button onclick="searchMovies()">Search</button>
+            </div>
+            <p class="loading" id="loading">Loading movies...</p>
+            <div class="movie-grid" id="search-results"></div>
+        </section>
+    
+        <section id="favorite-movies">
+            <h2>Your Favorite Movies</h2>
+            <div class="movie-grid" id="favorites-list"></div>
+        </section>
+    </main>
+    
+    <div class="modal" id="movie-modal">
+        <div class="modal-content" id="modal-content">
+            <button class="modal-close" id="close-modal">Close</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Movie Night Organizer</p>
+    </footer>
+</body>
+</html>
