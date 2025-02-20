@@ -8,6 +8,13 @@
     <meta name="author" content=" Kaye Gualingco ">
     <link rel="stylesheet" href="styles/final-project.css">
     <script src="scripts/app.js" defer></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .movie-container { display: flex; flex-wrap: wrap; justify-content: center; }
+        .movie-card { width: 200px; margin: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .movie-card img { width: 100%; border-radius: 5px; }
+    </style>
 </head>
 <body>
     <header>
@@ -18,11 +25,13 @@
                 <li><a href="search.html">Search Movies</a></li>
                 <li><a href="plan.html">Plan Event</a></li>
                 <li><a href="voting.html">Voting</a></li>
+
             </ul>
         </nav>
     </header>
        
     <main>
+        <div id="movie-container" class="movie-container"></div>
         <section id="search-movies">
             <h2>Search for Movies</h2>
             <div class="search-container">

@@ -3,14 +3,12 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w200';
 
 
-async function fetchMovies(query) {
+async function fetchMovies() {
     try {
-        const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+        if (!response.ok) throw new Error('Failed to fetch movie data.');
 
         const data = await response.json();
-        console.log("Movies Data:", data.results); // Debugging
-
         displayMovies(data.results);
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -63,14 +61,10 @@ async function searchMovies(query) {
     }
 }
 
+// Display movies dynamically
 function displayMovies(movies) {
-    const resultsContainer = document.getElementById('movies-container');
-    resultsContainer.innerHTML = ''; // Clear previous results
-
-    if (movies.length === 0) {
-        resultsContainer.innerHTML = '<p>No movies found. Try a different search.</p>';
-        return;
-    }
+    const container = document.getElementById('movie-container');
+    container.innerHTML = '';
 
     movies.forEach(movie => {
         const movieCard = document.createElement('div');
@@ -78,27 +72,20 @@ function displayMovies(movies) {
         movieCard.innerHTML = `
             <img src="${movie.poster_path ? IMG_BASE_URL + movie.poster_path : 'placeholder.jpg'}" alt="${movie.title}">
             <h3>${movie.title}</h3>
-            <p>Release Date: ${movie.release_date}</p>
-            <p>Rating: ${movie.vote_average}</p>
-            <button onclick="toggleFavorite(${movie.id}, '${movie.title}', '${movie.poster_path}')">❤️ Favorite</button>
-            <button onclick="voteMovie(${movie.id}, '${movie.title}')">👍 Vote</button>
+            <p>⭐ ${movie.vote_average} | 🗓 ${movie.release_date}</p>
         `;
-        resultsContainer.appendChild(movieCard);
+        container.appendChild(movieCard);
     });
 }
 
-document.getElementById('search-button').addEventListener('click', () => {
-    const query = document.getElementById('search-input').value.trim();
-    if (query) {
-        fetchMovies(query);
-    }
-});
+// Load movies on page load
+document.addEventListener('DOMContentLoaded', fetchMovies);
 
+
+// Handle search button click
 document.getElementById('search-button').addEventListener('click', () => {
     const query = document.getElementById('search-input').value.trim();
-    if (query) {
-        searchMovies(query);
-    }
+    if (query) fetchMovies(query);
 });
 
 
