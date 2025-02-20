@@ -1,17 +1,35 @@
-const API_KEY = 'YOUR_TMDB_API_KEY';
-const BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = '1c6fb6f48d642a316a1a8bb644e7d909'; 
+const BASE_URL = 'https://api.themoviedb.org/3'; 
 const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w200';
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadGenres();
-    loadFavorites();
-});
+
+async function fetchMovies(query) {
+    try {
+        const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const data = await response.json();
+        console.log("Movies Data:", data.results); // Debugging
+
+        displayMovies(data.results);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+    }
+}
 
 async function loadGenres() {
     try {
         const response = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
         const data = await response.json();
+        console.log("Genres Data:", data); 
+
         const genreSelect = document.getElementById('genre-filter');
+        if (!genreSelect) {
+            console.error("Genre select element not found!");
+            return;
+        }
 
         data.genres.forEach(genre => {
             const option = document.createElement('option');
@@ -19,53 +37,70 @@ async function loadGenres() {
             option.textContent = genre.name;
             genreSelect.appendChild(option);
         });
+
     } catch (error) {
         console.error('Error loading genres:', error);
     }
 }
 
-async function searchMovies() {
-    const query = document.getElementById('search-input').value.trim();
-    const genre = document.getElementById('genre-filter').value;
-    const loadingText = document.getElementById('loading');
-    const resultsContainer = document.getElementById('search-results');
+document.addEventListener('DOMContentLoaded', () => {
+    loadGenres(); 
+    loadFavorites();
+});
 
-    resultsContainer.innerHTML = '';
-    loadingText.style.display = 'block';
 
+async function searchMovies(query) {
     try {
-        let url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
-        if (genre) {
-            url += `&with_genres=${genre}`;
-        }
+        const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-        const response = await fetch(url);
         const data = await response.json();
+        console.log("Search Results:", data); // Log the search results
 
-        loadingText.style.display = 'none';
-
-        if (data.results.length === 0) {
-            resultsContainer.innerHTML = '<p>No movies found. Try a different search.</p>';
-            return;
-        }
-
-        data.results.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.classList.add('movie-card');
-            movieCard.innerHTML = `
-                <img src="${movie.poster_path ? IMG_BASE_URL + movie.poster_path : 'placeholder.jpg'}" alt="${movie.title}">
-                <h3>${movie.title}</h3>
-                <button onclick="showMovieDetails(${movie.id})">Details</button>
-                <button class="favorite-button" onclick="toggleFavorite(${movie.id}, '${movie.title}', '${movie.poster_path}')">❤️ Favorite</button>
-            `;
-            resultsContainer.appendChild(movieCard);
-        });
+        displayMovies(data.results);
     } catch (error) {
-        console.error('Error fetching movies:', error);
-        loadingText.style.display = 'none';
-        resultsContainer.innerHTML = '<p>Failed to load movies. Please try again later.</p>';
+        console.error('Error searching for movies:', error);
     }
 }
+
+function displayMovies(movies) {
+    const resultsContainer = document.getElementById('movies-container');
+    resultsContainer.innerHTML = ''; // Clear previous results
+
+    if (movies.length === 0) {
+        resultsContainer.innerHTML = '<p>No movies found. Try a different search.</p>';
+        return;
+    }
+
+    movies.forEach(movie => {
+        const movieCard = document.createElement('div');
+        movieCard.classList.add('movie-card');
+        movieCard.innerHTML = `
+            <img src="${movie.poster_path ? IMG_BASE_URL + movie.poster_path : 'placeholder.jpg'}" alt="${movie.title}">
+            <h3>${movie.title}</h3>
+            <p>Release Date: ${movie.release_date}</p>
+            <p>Rating: ${movie.vote_average}</p>
+            <button onclick="toggleFavorite(${movie.id}, '${movie.title}', '${movie.poster_path}')">❤️ Favorite</button>
+            <button onclick="voteMovie(${movie.id}, '${movie.title}')">👍 Vote</button>
+        `;
+        resultsContainer.appendChild(movieCard);
+    });
+}
+
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search-input').value.trim();
+    if (query) {
+        fetchMovies(query);
+    }
+});
+
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search-input').value.trim();
+    if (query) {
+        searchMovies(query);
+    }
+});
+
 
 async function showMovieDetails(movieId) {
     try {
@@ -121,7 +156,7 @@ function loadFavorites() {
         return;
     }
 
-    // --- PLAN ---
+    // --- PLAN --- //
 
     favorites.forEach(movie => {
         const movieCard = document.createElement('div');
@@ -152,5 +187,40 @@ function loadFavorites() {
         document.getElementById('event-summary').innerHTML = eventSummary;
     });
 
+    ///--- VOTE ---///
+    function voteMovie(movieId, title) {
+        let votes = JSON.parse(localStorage.getItem('votes')) || {};
+    
+        if (!votes[movieId]) {
+            votes[movieId] = { title: title, count: 1 };
+        } else {
+            votes[movieId].count++;
+        }
+    
+        localStorage.setItem('votes', JSON.stringify(votes));
+        alert(`You voted for "${title}". Total votes: ${votes[movieId].count}`);
+        displayVotes();
+    }
+    
+    function displayVotes() {
+        const votesContainer = document.getElementById('votes-list');
+        votesContainer.innerHTML = '';
+    
+        const votes = JSON.parse(localStorage.getItem('votes')) || {};
+    
+        if (Object.keys(votes).length === 0) {
+            votesContainer.innerHTML = '<p>No votes yet.</p>';
+            return;
+        }
+    
+        for (const movieId in votes) {
+            const voteItem = document.createElement('div');
+            voteItem.classList.add('vote-item');
+            voteItem.innerHTML = `<p>${votes[movieId].title}: ${votes[movieId].count} votes</p>`;
+            votesContainer.appendChild(voteItem);
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', displayVotes);
     
 }
