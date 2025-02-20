@@ -88,6 +88,16 @@ document.getElementById('search-button').addEventListener('click', () => {
     if (query) fetchMovies(query);
 });
 
+function showMovieDetails(movieId) {
+    const modal = document.getElementById('movie-modal');
+    modal.classList.add('show');
+}
+
+function closeModal() {
+    const modal = document.getElementById('movie-modal');
+    modal.classList.remove('show');
+}
+
 
 async function showMovieDetails(movieId) {
     try {

@@ -52,6 +52,13 @@ main {
     border-radius: 4px;
     cursor: pointer;
 }
+#genre-filter {
+    transition: all 0.3s ease-in-out;
+}
+
+#genre-filter:focus {
+    transform: scale(1.05);
+}
 .loading {
     display: none;
     font-size: 1.2rem;
@@ -73,6 +80,24 @@ main {
     text-align: center;
     max-width: 150px;
     cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease-in-out forwards;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .movie-card img {
     width: 100%;
@@ -107,6 +132,18 @@ main {
     padding: 0.5rem;
     border: none;
     cursor: pointer;
+}
+#movie-modal {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    display: none;
+}
+
+#movie-modal.show {
+    opacity: 1;
+    transform: scale(1);
+    display: flex;
 }
 #favorite-movies {
     margin-top: 2rem;
@@ -155,6 +192,8 @@ button {
     color: white;
     font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+
 }
 button:hover {
     background-color: #e04c2a;
